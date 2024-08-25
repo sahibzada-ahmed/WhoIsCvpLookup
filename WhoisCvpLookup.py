@@ -1,5 +1,5 @@
 import whois
-import argparse
+import socket
 import random
 from termcolor import colored
 
@@ -10,7 +10,7 @@ def display_banner():
     ██║     ██║   ██║██████╔╝███████║  ███╔╝ ███████║██║  ███╗╚████╔╝ 
     ██║     ██║   ██║██╔══██╗██╔══██║ ███╔╝  ██╔══██║██║   ██║ ╚██╔╝  
     ╚██████╗╚██████╔╝██║  ██║██║  ██║███████╗██║  ██║╚██████╔╝  ██║   
-     ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝   ╚═╝   
+     ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═════╝   ╚═╝   
                                                                       
     """
     creator_info = "Made by Faraz Ahmed | Cyber Vigilance PK"
@@ -31,12 +31,20 @@ def whois_lookup(domain):
     except Exception as e:
         return f"Error: {str(e)}"
 
-def display_whois_info(w):
+def get_ip_address(domain):
+    try:
+        ip_address = socket.gethostbyname(domain)
+        return ip_address
+    except socket.gaierror:
+        return "IP address not found."
+
+def display_whois_info(w, ip_address):
     print(colored(f"\n{'-'*50}", random_color()))
     print(colored(f"WHOIS Information for {w.domain_name}", random_color()))
     print(colored(f"{'-'*50}\n", random_color()))
     
     print(colored(f"Domain Name: {w.domain_name}", random_color()))
+    print(colored(f"IP Address: {ip_address}", random_color()))
     print(colored(f"Registrar: {w.registrar}", random_color()))
     print(colored(f"Creation Date: {w.creation_date}", random_color()))
     print(colored(f"Expiration Date: {w.expiration_date}", random_color()))
@@ -63,8 +71,9 @@ if __name__ == "__main__":
     domain = input(colored("Enter the domain name to lookup WHOIS information: ", random_color()))
     
     whois_data = whois_lookup(domain)
+    ip_address = get_ip_address(domain)
     
     if isinstance(whois_data, str):
         print(colored(whois_data, 'red'))
     else:
-        display_whois_info(whois_data)
+        display_whois_info(whois_data, ip_address)
